@@ -1,11 +1,28 @@
-script: |
-  cd ~/hate-speech-project
-  git pull origin main
+name: Deploy ML API
 
-  # stop only old app (safer)
-  ps aux | grep "python3 app/app.py" | grep -v grep | awk '{print $2}' | xargs -r kill
+on:
+  push:
+    branches:
+      - main
 
-  pip3 install -r requirements.txt --break-system-packages
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
 
-  # start app
-  nohup python3 app/app.py > log.txt 2>&1 &
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            cd ~/hate-speech-project
+            git pull origin main
+
+            # safer process kill
+            ps aux | grep "python3 app/app.py" | grep -v grep | awk '{print $2}' | xargs -r kill
+
+            pip3 install -r requirements.txt --break-system-packages
+
+            nohup python3 app/app.py > log.txt 2>&1 &
