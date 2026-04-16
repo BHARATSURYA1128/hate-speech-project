@@ -17,12 +17,13 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           script: |
-            cd ~/hate-speech-project
-            git pull origin main
+  cd ~/hate-speech-project
+  git pull origin main
 
-            pkill -f app.py || true
+  # safer stop
+  pkill -f "python3 app/app.py" || true
 
-            pip3 install -r requirements.txt --break-system-packages
+  pip3 install -r requirements.txt --break-system-packages
 
-            nohup python3 app/app.py > log.txt 2>&1 &
-    
+  # start app
+  nohup python3 app/app.py > log.txt 2>&1 &
