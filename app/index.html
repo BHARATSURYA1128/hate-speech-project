@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Hate Speech Detection</h2>
+
+<input type="text" id="text" placeholder="Enter text" />
+<button onclick="predict()">Check</button>
+
+<p id="result"></p>
+
+<script>
+async function predict() {
+    let text = document.getElementById("text").value;
+
+    let res = await fetch('/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: text })
+    });
+
+    let data = await res.json();
+    document.getElementById("result").innerText =
+        data.prediction === 1 ? "Hate Speech ❌" : "Normal ✅";
+}
+</script>
+
+</body>
+</html>
