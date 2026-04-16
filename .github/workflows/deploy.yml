@@ -1,12 +1,27 @@
-script: |
-  cd ~/hate-speech-project
-  git pull origin main
-  
-  # stop old app
-  pkill -f app.py || true
-  
-  # install dependencies (safe)
-  pip3 install -r requirements.txt --break-system-packages
-  
-  # start app again
-  nohup python3 app/app.py > log.txt 2>&1 &
+name: Deploy ML API
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            cd ~/hate-speech-project
+            git pull origin main
+
+            pkill -f app.py || true
+
+            pip3 install -r requirements.txt --break-system-packages
+
+            nohup python3 app/app.py > log.txt 2>&1 &
