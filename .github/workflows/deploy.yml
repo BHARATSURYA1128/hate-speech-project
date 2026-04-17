@@ -20,9 +20,7 @@ jobs:
             cd ~/hate-speech-project
             git pull origin main
 
-            # safer process kill
-            ps aux | grep "python3 app/app.py" | grep -v grep | awk '{print $2}' | xargs -r kill
-
             pip3 install -r requirements.txt --break-system-packages
 
-            nohup python3 app/app.py > log.txt 2>&1 &
+            cd app
+            nohup python3 app.py > log.txt 2>&1 &
